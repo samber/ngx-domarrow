@@ -2,7 +2,7 @@
 
 This library brings [domarrow](https://github.com/schaumb/domarrow.js) to Angular 2+.
 
-See [demo]().
+See [demo](https://samber.github.io/ngx-domarrow).
 
 ## Install
 
