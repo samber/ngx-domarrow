@@ -1,13 +1,21 @@
 {
   "name": "ngx-domarrow",
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/samber/ngx-domarrow.git"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "build": "npm run clean && run-s build:*",
+    "build:lib": "ng build ngx-domarrow",
+    "build:copy-files": "cp README.md LICENSE.md dist/ngx-domarrow",
+    "test": "run-p test:*",
+    "test:lib": "ng test ngx-domarrow",
+    "lint": "run-s lint:*",
+    "lint:lib": "ng lint ngx-domarrow",
+    "clean": "rm -rf dist"
   },
   "private": true,
   "peerDependencies": {
@@ -41,6 +49,7 @@
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
     "ng-packagr": "^5.4.0",
+    "npm-run-all": "^4.1.5",
     "protractor": "~5.4.0",
     "rxjs": "~6.4.0",
     "ts-node": "~7.0.0",
