@@ -45,7 +45,13 @@ npm run test
 npm run lint
 ```
 
+## Publish
+
+Update package version into `lib/package.json`
+
 ```
+npm run build
+cd dist/ngx-domarrow/
 npm publish
 ```
 
