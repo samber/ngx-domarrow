@@ -17,7 +17,15 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ngx-domarrow": [
+        "dist/ngx-domarrow"
+      ],
+      "ngx-domarrow/*": [
+        "dist/ngx-domarrow/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

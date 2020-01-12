@@ -1,0 +1,9 @@
+<div class="line" [ngStyle]="styleLine">
+
+  <div *ngIf="head == true" class="arrow head {{ needSwap ? 'arrow-bw' : 'arrow-fw' }}"
+    [ngStyle]="needSwap ? styleArrowBw : styleArrowFw"></div>
+  <div *ngIf="tail == true" class="arrow tail {{ needSwap ? 'arrow-fw' : 'arrow-bw' }}"
+    [ngStyle]="needSwap ? styleArrowFw : styleArrowBw"></div>
+  <div *ngIf="!!text && text.length > 0" class="text">{{ text }}</div>
+
+</div>

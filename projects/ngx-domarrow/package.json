@@ -1,0 +1,8 @@
+{
+  "name": "ngx-domarrow",
+  "version": "0.1.0",
+  "peerDependencies": {
+    "@angular/common": ">=4.0.0",
+    "@angular/core": ">=4.0.0"
+  }
+}
