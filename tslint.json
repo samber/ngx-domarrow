@@ -6,9 +6,22 @@
   "rules": {
     "array-type": false,
     "arrow-parens": false,
+    "component-selector": [
+      true,
+      "element",
+      "lib",
+      "kebab-case"
+    ],
+    "curly": [true, "as-needed"],
     "deprecation": {
       "severity": "warning"
     },
+    "directive-selector": [
+      true,
+      "attribute",
+      "lib",
+      "camelCase"
+    ],
     "import-blacklist": [
       true,
       "rxjs/Rx"

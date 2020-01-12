@@ -28,7 +28,7 @@ export class NgxDomarrowComponent implements OnInit, OnChanges {
   public styleArrowBw: object = {};
   public needSwap: boolean = false;
 
-  private elementPositionBackup: string = "";
+  private elementPositionBackup: string = '';
   private refreshPos: number = null;
 
   constructor(
@@ -48,37 +48,45 @@ export class NgxDomarrowComponent implements OnInit, OnChanges {
   }
 
   private intersectionPoint(x1, y1, x2, y2, minX, minY, maxX, maxY) {
-    const min = Math.min,
-      max = Math.max;
+    const min = Math.min;
+    const max = Math.max;
     const good = this.inside.bind(null, min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
 
-    if ((x1 <= minX && x2 <= minX) || (y1 <= minY && y2 <= minY) || (x1 >= maxX && x2 >= maxX) || (y1 >= maxY && y2 >= maxY) || (this.inside(minX, minY, maxX, maxY, x1, y1) && this.inside(minX, minY, maxX, maxY, x2, y2)))
+    if ((x1 <= minX && x2 <= minX)
+      || (y1 <= minY && y2 <= minY)
+      || (x1 >= maxX && x2 >= maxX)
+      || (y1 >= maxY && y2 >= maxY)
+      || (this.inside(minX, minY, maxX, maxY, x1, y1) && this.inside(minX, minY, maxX, maxY, x2, y2)))
       return null;
 
     const m = (y2 - y1) / (x2 - x1);
     let y = m * (minX - x1) + y1;
-    if (minY < y && y < maxY && good(minX, y)) return {
-      x: minX,
-      y: y
-    };
+    if (minY < y && y < maxY && good(minX, y))
+      return {
+        x: minX,
+        y: y
+      };
 
     y = m * (maxX - x1) + y1;
-    if (minY < y && y < maxY && good(maxX, y)) return {
-      x: maxX,
-      y: y
-    };
+    if (minY < y && y < maxY && good(maxX, y))
+      return {
+        x: maxX,
+        y: y
+      };
 
     let x = (minY - y1) / m + x1;
-    if (minX < x && x < maxX && good(x, minY)) return {
-      x: x,
-      y: minY
-    };
+    if (minX < x && x < maxX && good(x, minY))
+      return {
+        x: x,
+        y: minY
+      };
 
     x = (maxY - y1) / m + x1;
-    if (minX < x && x < maxX && good(x, maxY)) return {
-      x: x,
-      y: maxY
-    };
+    if (minX < x && x < maxX && good(x, maxY))
+      return {
+        x: x,
+        y: maxY
+      };
 
     return null;
   }
@@ -114,9 +122,8 @@ export class NgxDomarrowComponent implements OnInit, OnChanges {
     let H = Math.sqrt(CA * CA + CO * CO);
     let ANG = 180 / Math.PI * Math.acos(CO / H);
 
-    if ((fT >= tT || fL >= tL) && (tT >= fT || tL >= fL)) {
+    if ((fT >= tT || fL >= tL) && (tT >= fT || tL >= fL))
       ANG *= -1;
-    }
 
     if (this.onlyVisible) {
       const arrangeFrom = this.intersectionPoint(fL, fT, tL, tT, fromBStartX, fromBStartY, fromBStartX + fromBWidth, fromBStartY + fromBHeight);
@@ -140,30 +147,30 @@ export class NgxDomarrowComponent implements OnInit, OnChanges {
 
     const arrows = this.elem.nativeElement.querySelectorAll('.arrow');
 
-    this.needSwap = (fL > tL || (fL == tL && fT < tT));
+    this.needSwap = (fL > tL || (fL === tL && fT < tT));
     const arrowFw = this.needSwap && this.isVisible(arrows[0]) && arrows[0] || !this.needSwap && this.isVisible(arrows[1]) && arrows[1];
     const arrowBw = !this.needSwap && this.isVisible(arrows[0]) && arrows[0] || this.needSwap && this.isVisible(arrows[1]) && arrows[1];
 
     this.styleArrowFw['borderRightColor'] = color;
-    this.styleArrowFw['top'] = W / 2 - 6 + "px";
+    this.styleArrowFw['top'] = W / 2 - 6 + 'px';
     this.styleArrowBw['borderLeftColor'] = color;
-    this.styleArrowBw['top'] = W / 2 - 6 + "px";
+    this.styleArrowBw['top'] = W / 2 - 6 + 'px';
 
-    this.styleLine['display'] = "none";
-    this.styleLine["-webkit-transform"] = 'rotate(' + ANG + 'deg)';
-    this.styleLine["-moz-transform"] = 'rotate(' + ANG + 'deg)';
-    this.styleLine["-ms-transform"] = 'rotate(' + ANG + 'deg)';
-    this.styleLine["-o-transform"] = 'rotate(' + ANG + 'deg)';
-    this.styleLine["-transform"] = 'rotate(' + ANG + 'deg)';
+    this.styleLine['display'] = 'none';
+    this.styleLine['-webkit-transform'] = 'rotate(' + ANG + 'deg)';
+    this.styleLine['-moz-transform'] = 'rotate(' + ANG + 'deg)';
+    this.styleLine['-ms-transform'] = 'rotate(' + ANG + 'deg)';
+    this.styleLine['-o-transform'] = 'rotate(' + ANG + 'deg)';
+    this.styleLine['-transform'] = 'rotate(' + ANG + 'deg)';
     this.styleLine['top'] = top + 'px';
     this.styleLine['left'] = left + 'px';
     this.styleLine['width'] = H + 'px';
     this.styleLine['height'] = W + 'px';
-    this.styleLine['background'] = "linear-gradient(to right, " +
-      (arrowFw ? "transparent" : color) + " 11px, " +
-      color + " 11px " + (H - 11) + "px, " +
-      (arrowBw ? "transparent" : color) + " " + (H - 11) + "px 100%)";
-    this.styleLine['display'] = "initial";
+    this.styleLine['background'] = 'linear-gradient(to right, ' +
+      (arrowFw ? 'transparent' : color) + ' 11px, ' +
+      color + ' 11px ' + (H - 11) + 'px, ' +
+      (arrowBw ? 'transparent' : color) + ' ' + (H - 11) + 'px 100%)';
+    this.styleLine['display'] = 'initial';
   }
 
   private trackPositionChange() {
@@ -173,7 +180,7 @@ export class NgxDomarrowComponent implements OnInit, OnChanges {
       return;
 
     const currentPos = JSON.stringify(from.getBoundingClientRect()) + JSON.stringify(to.getBoundingClientRect());
-    if (currentPos != this.elementPositionBackup) {
+    if (currentPos !== this.elementPositionBackup) {
       this.elementPositionBackup = currentPos;
       this.adjustLine();
     }

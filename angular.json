@@ -5,31 +5,31 @@
   "projects": {
     "ngx-domarrow": {
       "projectType": "library",
-      "root": "projects/ngx-domarrow",
-      "sourceRoot": "projects/ngx-domarrow/src",
-      "prefix": "lib",
+      "root": "lib",
+      "sourceRoot": "lib/src",
+      "prefix": "ngx-domarrow",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",
           "options": {
-            "tsConfig": "projects/ngx-domarrow/tsconfig.lib.json",
-            "project": "projects/ngx-domarrow/ng-package.json"
+            "tsConfig": "lib/tsconfig.lib.json",
+            "project": "lib/ng-package.json"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/ngx-domarrow/src/test.ts",
-            "tsConfig": "projects/ngx-domarrow/tsconfig.spec.json",
-            "karmaConfig": "projects/ngx-domarrow/karma.conf.js"
+            "main": "lib/src/test.ts",
+            "tsConfig": "lib/tsconfig.spec.json",
+            "karmaConfig": "lib/karma.conf.js"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/ngx-domarrow/tsconfig.lib.json",
-              "projects/ngx-domarrow/tsconfig.spec.json"
+              "lib/tsconfig.lib.json",
+              "lib/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"
@@ -37,6 +37,7 @@
           }
         }
       }
-    }},
+    }
+  },
   "defaultProject": "ngx-domarrow"
 }
