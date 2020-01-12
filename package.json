@@ -11,7 +11,7 @@
     "build": "npm run clean && run-s build:*",
     "build:lib": "ng build ngx-domarrow",
     "build:copy-files": "cp README.md LICENSE.md dist/ngx-domarrow",
-    "build:demo": "ng build demo",
+    "build:demo": "ng build --base-href ngx-domarrow demo",
     "test": "run-p test:*",
     "test:lib": "ng test ngx-domarrow",
     "test:demo": "ng test demo",
