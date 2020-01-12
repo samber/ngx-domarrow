@@ -7,15 +7,18 @@
   },
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve demo",
     "build": "npm run clean && run-s build:*",
     "build:lib": "ng build ngx-domarrow",
     "build:copy-files": "cp README.md LICENSE.md dist/ngx-domarrow",
+    "build:demo": "ng build demo",
     "test": "run-p test:*",
     "test:lib": "ng test ngx-domarrow",
+    "test:demo": "ng test demo",
     "lint": "run-s lint:*",
     "lint:lib": "ng lint ngx-domarrow",
-    "clean": "rm -rf dist"
+    "lint:demo": "ng lint demo",
+    "clean": "rm -rf dist/ doc/"
   },
   "private": true,
   "peerDependencies": {

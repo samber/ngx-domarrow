@@ -29,11 +29,11 @@ import { NgxDomarrowModule } from 'ngx-domarrow';
 2. Add it to your template.
 
 ```html
-<ngx-domarrow from="#image-1" to="#image-2" [tail]="true" color="red" text="Hello world" [onlyVisible]="true"></ngx-domarrow>
+<ngx-domarrow from="#image-1" to="#image-2" [tail]="true" [onlyVisible]="true"
+        color="red" text="Hello world"></ngx-domarrow>
 
-<ngx-domarrow from="#image-1" to="#image-2" [head]="true" [tail]="true" color="#0000FF" [onlyVisible]="true"></ngx-domarrow>
-```
-
+<ngx-domarrow from="#image-1" to="#image-2" [head]="true" [tail]="true"
+        color="#0000FF"></ngx-domarrow>
 ```
 
 ## Contribute
