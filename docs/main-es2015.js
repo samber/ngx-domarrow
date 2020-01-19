@@ -287,7 +287,11 @@ class NgxDomarrowComponent {
                 acc2.push([cur1, cur2]);
                 return acc2;
             }), acc1);
-        }), []);
+        }), []).filter((/**
+         * @param {?} pair
+         * @return {?}
+         */
+        (pair) => !!pair[0] && !!pair[1]));
     }
     /**
      * @private
@@ -295,13 +299,16 @@ class NgxDomarrowComponent {
      */
     trackPositionChange() {
         /** @type {?} */
-        const from = document.querySelector(this.from);
+        const pairs = this.getFromToPairs();
         /** @type {?} */
-        const to = document.querySelector(this.to);
-        if (to == null || from == null)
-            return;
-        /** @type {?} */
-        const currentPos = JSON.stringify(from.getBoundingClientRect()) + JSON.stringify(to.getBoundingClientRect());
+        const currentPos = pairs.map((/**
+         * @param {?} pair
+         * @return {?}
+         */
+        (pair) => {
+            return JSON.stringify(pair[0].getBoundingClientRect()) + JSON.stringify(pair[1].getBoundingClientRect());
+            ;
+        })).join(',');
         if (currentPos !== this.elementPositionBackup) {
             this.elementPositionBackup = currentPos;
             this.adjustLines();

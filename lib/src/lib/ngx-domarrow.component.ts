@@ -203,16 +203,16 @@ export class NgxDomarrowComponent implements OnInit, OnChanges {
         acc2.push([cur1, cur2]);
         return acc2;
       }, acc1);
-    }, []);
+    }, []).filter((pair: HTMLElement[]) => !!pair[0] && !!pair[1]);
   }
 
   private trackPositionChange() {
-    const from = document.querySelector(this.from);
-    const to = document.querySelector(this.to);
-    if (to == null || from == null)
-      return;
+    const pairs = this.getFromToPairs();
 
-    const currentPos = JSON.stringify(from.getBoundingClientRect()) + JSON.stringify(to.getBoundingClientRect());
+    const currentPos = pairs.map((pair: HTMLElement[]) => {
+      return JSON.stringify(pair[0].getBoundingClientRect()) + JSON.stringify(pair[1].getBoundingClientRect());;
+    }).join(',');
+
     if (currentPos !== this.elementPositionBackup) {
       this.elementPositionBackup = currentPos;
       this.adjustLines();

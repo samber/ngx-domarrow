@@ -374,7 +374,14 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
               acc2.push([cur1, cur2]);
               return acc2;
             }, acc1);
-          }, []);
+          }, []).filter(
+          /**
+          * @param {?} pair
+          * @return {?}
+          */
+          function (pair) {
+            return !!pair[0] && !!pair[1];
+          });
         }
         /**
          * @private
@@ -385,14 +392,18 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         key: "trackPositionChange",
         value: function trackPositionChange() {
           /** @type {?} */
-          var from = document.querySelector(this.from);
+          var pairs = this.getFromToPairs();
           /** @type {?} */
 
-          var to = document.querySelector(this.to);
-          if (to == null || from == null) return;
-          /** @type {?} */
-
-          var currentPos = JSON.stringify(from.getBoundingClientRect()) + JSON.stringify(to.getBoundingClientRect());
+          var currentPos = pairs.map(
+          /**
+          * @param {?} pair
+          * @return {?}
+          */
+          function (pair) {
+            return JSON.stringify(pair[0].getBoundingClientRect()) + JSON.stringify(pair[1].getBoundingClientRect());
+            ;
+          }).join(',');
 
           if (currentPos !== this.elementPositionBackup) {
             this.elementPositionBackup = currentPos;
