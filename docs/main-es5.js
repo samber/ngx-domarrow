@@ -316,7 +316,24 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         value: function adjustLines() {
           var _this = this;
 
-          this.getFromToPairs().map(
+          /** @type {?} */
+          var pairs = this.getFromToPairs() // init values
+          ; // init values
+
+          this.needSwap = Array(pairs.length).fill(false);
+          this.styleLine = Array(pairs.length).fill([]);
+          this.styleArrowBw = Array(pairs.length).fill({});
+          this.styleArrowFw = Array(pairs.length).fill({});
+          this.arrowIndices = Array(pairs.length).fill(null).map(
+          /**
+          * @param {?} _
+          * @param {?} i
+          * @return {?}
+          */
+          function (_, i) {
+            return i;
+          });
+          pairs.map(
           /**
           * @param {?} pair
           * @param {?} i
@@ -342,21 +359,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
           var tos = Array.from(
           /** @type {?} */
-          document.querySelectorAll(this.to)); // init values
-
-          this.needSwap = Array(froms.length * tos.length).fill(false);
-          this.styleLine = Array(froms.length * tos.length).fill([]);
-          this.styleArrowBw = Array(froms.length * tos.length).fill({});
-          this.styleArrowFw = Array(froms.length * tos.length).fill({});
-          this.arrowIndices = Array(froms.length * tos.length).fill(null).map(
-          /**
-          * @param {?} _
-          * @param {?} i
-          * @return {?}
-          */
-          function (_, i) {
-            return i;
-          });
+          document.querySelectorAll(this.to));
           return froms.reduce(
           /**
           * @param {?} acc1

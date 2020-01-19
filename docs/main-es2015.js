@@ -241,8 +241,23 @@ class NgxDomarrowComponent {
      * @return {?}
      */
     adjustLines() {
-        this.getFromToPairs()
-            .map((/**
+        /** @type {?} */
+        const pairs = this.getFromToPairs()
+        // init values
+        ;
+        // init values
+        this.needSwap = Array(pairs.length).fill(false);
+        this.styleLine = Array(pairs.length).fill([]);
+        this.styleArrowBw = Array(pairs.length).fill({});
+        this.styleArrowFw = Array(pairs.length).fill({});
+        this.arrowIndices = Array(pairs.length)
+            .fill(null).map((/**
+         * @param {?} _
+         * @param {?} i
+         * @return {?}
+         */
+        (_, i) => i));
+        pairs.map((/**
          * @param {?} pair
          * @param {?} i
          * @return {?}
@@ -260,18 +275,6 @@ class NgxDomarrowComponent {
         const froms = Array.from((/** @type {?} */ (document.querySelectorAll(this.from))));
         /** @type {?} */
         const tos = Array.from((/** @type {?} */ (document.querySelectorAll(this.to))));
-        // init values
-        this.needSwap = Array(froms.length * tos.length).fill(false);
-        this.styleLine = Array(froms.length * tos.length).fill([]);
-        this.styleArrowBw = Array(froms.length * tos.length).fill({});
-        this.styleArrowFw = Array(froms.length * tos.length).fill({});
-        this.arrowIndices = Array(froms.length * tos.length)
-            .fill(null).map((/**
-         * @param {?} _
-         * @param {?} i
-         * @return {?}
-         */
-        (_, i) => i));
         return froms.reduce((/**
          * @param {?} acc1
          * @param {?} cur1

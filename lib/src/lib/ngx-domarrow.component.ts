@@ -179,24 +179,25 @@ export class NgxDomarrowComponent implements OnInit, OnChanges {
   }
 
   private adjustLines() {
-    this.getFromToPairs()
-      .map((pair: HTMLElement[], i: number) => {
-        this.adjustLine(i, pair[0], pair[1]);
-      });
+    const pairs = this.getFromToPairs()
+
+    // init values
+    this.needSwap = Array(pairs.length).fill(false);
+    this.styleLine = Array(pairs.length).fill([]);
+    this.styleArrowBw = Array(pairs.length).fill({});
+    this.styleArrowFw = Array(pairs.length).fill({});
+
+    this.arrowIndices = Array(pairs.length)
+      .fill(null).map((_, i) => i);
+
+    pairs.map((pair: HTMLElement[], i: number) => {
+      this.adjustLine(i, pair[0], pair[1]);
+    });
   }
 
   private getFromToPairs() {
     const froms = Array.from(document.querySelectorAll(this.from) as NodeListOf<HTMLElement>);
     const tos = Array.from(document.querySelectorAll(this.to) as NodeListOf<HTMLElement>);
-
-    // init values
-    this.needSwap = Array(froms.length * tos.length).fill(false);
-    this.styleLine = Array(froms.length * tos.length).fill([]);
-    this.styleArrowBw = Array(froms.length * tos.length).fill({});
-    this.styleArrowFw = Array(froms.length * tos.length).fill({});
-
-    this.arrowIndices = Array(froms.length * tos.length)
-      .fill(null).map((_, i) => i);
 
     return froms.reduce((acc1, cur1) => {
       return tos.reduce((acc2, cur2) => {
