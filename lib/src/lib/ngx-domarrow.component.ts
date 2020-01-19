@@ -7,6 +7,8 @@ import { Component, Input, OnInit, OnChanges, ElementRef } from '@angular/core';
 })
 export class NgxDomarrowComponent implements OnInit, OnChanges {
 
+  @Input() public refreshInterval: number = 50;
+
   @Input() public from: string = null;
   @Input() public to: string = null;
 
@@ -23,10 +25,12 @@ export class NgxDomarrowComponent implements OnInit, OnChanges {
   @Input() public toX: number = null;
   @Input() public toY: number = null;
 
-  public styleLine: object = {};
-  public styleArrowFw: object = {};
-  public styleArrowBw: object = {};
-  public needSwap: boolean = false;
+  public arrowIndices: number[] = [];
+
+  public styleLine: object[] = [];
+  public styleArrowFw: object[] = [];
+  public styleArrowBw: object[] = [];
+  public needSwap: boolean[] = [];
 
   private elementPositionBackup: string = '';
   private refreshPos: number = null;
@@ -91,10 +95,7 @@ export class NgxDomarrowComponent implements OnInit, OnChanges {
     return null;
   }
 
-
-  private adjustLine() {
-    const from = document.querySelector(this.from) as HTMLElement;
-    const to = document.querySelector(this.to) as HTMLElement;
+  private adjustLine(nth: number, from: HTMLElement, to: HTMLElement) {
     if (to == null || from == null)
       return;
 
@@ -145,32 +146,64 @@ export class NgxDomarrowComponent implements OnInit, OnChanges {
     const top = (tT + fT) / 2 - W / 2;
     const left = (tL + fL) / 2 - H / 2;
 
-    const arrows = this.elem.nativeElement.querySelectorAll('.arrow');
+    const arrows = this.elem.nativeElement.querySelectorAll('.line-' + nth + ' .arrow');
 
-    this.needSwap = (fL > tL || (fL === tL && fT < tT));
-    const arrowFw = this.needSwap && this.isVisible(arrows[0]) && arrows[0] || !this.needSwap && this.isVisible(arrows[1]) && arrows[1];
-    const arrowBw = !this.needSwap && this.isVisible(arrows[0]) && arrows[0] || this.needSwap && this.isVisible(arrows[1]) && arrows[1];
+    this.needSwap[nth] = (fL > tL || (fL === tL && fT < tT));
+    const arrowFw = this.needSwap[nth] && this.isVisible(arrows[0]) && arrows[0] || !this.needSwap[nth] && this.isVisible(arrows[1]) && arrows[1];
+    const arrowBw = !this.needSwap[nth] && this.isVisible(arrows[0]) && arrows[0] || this.needSwap[nth] && this.isVisible(arrows[1]) && arrows[1];
 
-    this.styleArrowFw['borderRightColor'] = color;
-    this.styleArrowFw['top'] = W / 2 - 6 + 'px';
-    this.styleArrowBw['borderLeftColor'] = color;
-    this.styleArrowBw['top'] = W / 2 - 6 + 'px';
+    this.styleArrowFw[nth] = {};
+    this.styleArrowBw[nth] = {};
+    this.styleLine[nth] = {};
 
-    this.styleLine['display'] = 'none';
-    this.styleLine['-webkit-transform'] = 'rotate(' + ANG + 'deg)';
-    this.styleLine['-moz-transform'] = 'rotate(' + ANG + 'deg)';
-    this.styleLine['-ms-transform'] = 'rotate(' + ANG + 'deg)';
-    this.styleLine['-o-transform'] = 'rotate(' + ANG + 'deg)';
-    this.styleLine['-transform'] = 'rotate(' + ANG + 'deg)';
-    this.styleLine['top'] = top + 'px';
-    this.styleLine['left'] = left + 'px';
-    this.styleLine['width'] = H + 'px';
-    this.styleLine['height'] = W + 'px';
-    this.styleLine['background'] = 'linear-gradient(to right, ' +
+    this.styleArrowFw[nth]['borderRightColor'] = color;
+    this.styleArrowFw[nth]['top'] = W / 2 - 6 + 'px';
+    this.styleArrowBw[nth]['borderLeftColor'] = color;
+    this.styleArrowBw[nth]['top'] = W / 2 - 6 + 'px';
+
+    this.styleLine[nth]['display'] = 'none';
+    this.styleLine[nth]['-webkit-transform'] = 'rotate(' + ANG + 'deg)';
+    this.styleLine[nth]['-moz-transform'] = 'rotate(' + ANG + 'deg)';
+    this.styleLine[nth]['-ms-transform'] = 'rotate(' + ANG + 'deg)';
+    this.styleLine[nth]['-o-transform'] = 'rotate(' + ANG + 'deg)';
+    this.styleLine[nth]['-transform'] = 'rotate(' + ANG + 'deg)';
+    this.styleLine[nth]['top'] = top + 'px';
+    this.styleLine[nth]['left'] = left + 'px';
+    this.styleLine[nth]['width'] = H + 'px';
+    this.styleLine[nth]['height'] = W + 'px';
+    this.styleLine[nth]['background'] = 'linear-gradient(to right, ' +
       (arrowFw ? 'transparent' : color) + ' 11px, ' +
       color + ' 11px ' + (H - 11) + 'px, ' +
       (arrowBw ? 'transparent' : color) + ' ' + (H - 11) + 'px 100%)';
-    this.styleLine['display'] = 'initial';
+    this.styleLine[nth]['display'] = 'initial';
+  }
+
+  private adjustLines() {
+    this.getFromToPairs()
+      .map((pair: HTMLElement[], i: number) => {
+        this.adjustLine(i, pair[0], pair[1]);
+      });
+  }
+
+  private getFromToPairs() {
+    const froms = Array.from(document.querySelectorAll(this.from) as NodeListOf<HTMLElement>);
+    const tos = Array.from(document.querySelectorAll(this.to) as NodeListOf<HTMLElement>);
+
+    // init values
+    this.needSwap = Array(froms.length * tos.length).fill(false);
+    this.styleLine = Array(froms.length * tos.length).fill([]);
+    this.styleArrowBw = Array(froms.length * tos.length).fill({});
+    this.styleArrowFw = Array(froms.length * tos.length).fill({});
+
+    this.arrowIndices = Array(froms.length * tos.length)
+      .fill(null).map((_, i) => i);
+
+    return froms.reduce((acc1, cur1) => {
+      return tos.reduce((acc2, cur2) => {
+        acc2.push([cur1, cur2]);
+        return acc2;
+      }, acc1);
+    }, []);
   }
 
   private trackPositionChange() {
@@ -182,21 +215,21 @@ export class NgxDomarrowComponent implements OnInit, OnChanges {
     const currentPos = JSON.stringify(from.getBoundingClientRect()) + JSON.stringify(to.getBoundingClientRect());
     if (currentPos !== this.elementPositionBackup) {
       this.elementPositionBackup = currentPos;
-      this.adjustLine();
+      this.adjustLines();
     }
   }
 
   ngOnInit() {
-    this.adjustLine();
+    this.adjustLines();
 
     this.refreshPos = window.setInterval(() => {
       this.trackPositionChange();
-    }, 100);
+    }, this.refreshInterval);
   }
 
 
   ngOnChanges() {
-    this.adjustLine();
+    this.adjustLines();
   }
 
   ngOnDestroy() {

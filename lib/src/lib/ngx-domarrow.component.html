@@ -1,9 +1,13 @@
-<div class="line" [ngStyle]="styleLine">
+<ng-container *ngFor="let index of arrowIndices">
 
-  <div *ngIf="head == true" class="arrow head {{ needSwap ? 'arrow-bw' : 'arrow-fw' }}"
-    [ngStyle]="needSwap ? styleArrowBw : styleArrowFw"></div>
-  <div *ngIf="tail == true" class="arrow tail {{ needSwap ? 'arrow-fw' : 'arrow-bw' }}"
-    [ngStyle]="needSwap ? styleArrowFw : styleArrowBw"></div>
-  <div *ngIf="!!text && text.length > 0" class="text">{{ text }}</div>
+  <div class="line line-{{ index }}" [ngStyle]="styleLine[index]">
 
-</div>
+    <div *ngIf="head == true" class="arrow head {{ needSwap[index] ? 'arrow-bw' : 'arrow-fw' }}"
+      [ngStyle]="needSwap[index] ? styleArrowBw[index] : styleArrowFw[index]"></div>
+    <div *ngIf="tail == true" class="arrow tail {{ needSwap[index] ? 'arrow-fw' : 'arrow-bw' }}"
+      [ngStyle]="needSwap[index] ? styleArrowFw[index] : styleArrowBw[index]"></div>
+    <div *ngIf="!!text && text.length > 0" class="text">{{ text }}</div>
+
+  </div>
+
+</ng-container>

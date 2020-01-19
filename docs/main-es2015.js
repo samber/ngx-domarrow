@@ -27,6 +27,7 @@ class NgxDomarrowComponent {
      */
     constructor(elem) {
         this.elem = elem;
+        this.refreshInterval = 50;
         this.from = null;
         this.to = null;
         this.head = false;
@@ -39,10 +40,11 @@ class NgxDomarrowComponent {
         this.fromY = null;
         this.toX = null;
         this.toY = null;
-        this.styleLine = {};
-        this.styleArrowFw = {};
-        this.styleArrowBw = {};
-        this.needSwap = false;
+        this.arrowIndices = [];
+        this.styleLine = [];
+        this.styleArrowFw = [];
+        this.styleArrowBw = [];
+        this.needSwap = [];
         this.elementPositionBackup = '';
         this.refreshPos = null;
     }
@@ -133,13 +135,12 @@ class NgxDomarrowComponent {
     }
     /**
      * @private
+     * @param {?} nth
+     * @param {?} from
+     * @param {?} to
      * @return {?}
      */
-    adjustLine() {
-        /** @type {?} */
-        const from = (/** @type {?} */ (document.querySelector(this.from)));
-        /** @type {?} */
-        const to = (/** @type {?} */ (document.querySelector(this.to)));
+    adjustLine(nth, from, to) {
         if (to == null || from == null)
             return;
         /** @type {?} */
@@ -206,31 +207,87 @@ class NgxDomarrowComponent {
         /** @type {?} */
         const left = (tL + fL) / 2 - H / 2;
         /** @type {?} */
-        const arrows = this.elem.nativeElement.querySelectorAll('.arrow');
-        this.needSwap = (fL > tL || (fL === tL && fT < tT));
+        const arrows = this.elem.nativeElement.querySelectorAll('.line-' + nth + ' .arrow');
+        this.needSwap[nth] = (fL > tL || (fL === tL && fT < tT));
         /** @type {?} */
-        const arrowFw = this.needSwap && this.isVisible(arrows[0]) && arrows[0] || !this.needSwap && this.isVisible(arrows[1]) && arrows[1];
+        const arrowFw = this.needSwap[nth] && this.isVisible(arrows[0]) && arrows[0] || !this.needSwap[nth] && this.isVisible(arrows[1]) && arrows[1];
         /** @type {?} */
-        const arrowBw = !this.needSwap && this.isVisible(arrows[0]) && arrows[0] || this.needSwap && this.isVisible(arrows[1]) && arrows[1];
-        this.styleArrowFw['borderRightColor'] = color;
-        this.styleArrowFw['top'] = W / 2 - 6 + 'px';
-        this.styleArrowBw['borderLeftColor'] = color;
-        this.styleArrowBw['top'] = W / 2 - 6 + 'px';
-        this.styleLine['display'] = 'none';
-        this.styleLine['-webkit-transform'] = 'rotate(' + ANG + 'deg)';
-        this.styleLine['-moz-transform'] = 'rotate(' + ANG + 'deg)';
-        this.styleLine['-ms-transform'] = 'rotate(' + ANG + 'deg)';
-        this.styleLine['-o-transform'] = 'rotate(' + ANG + 'deg)';
-        this.styleLine['-transform'] = 'rotate(' + ANG + 'deg)';
-        this.styleLine['top'] = top + 'px';
-        this.styleLine['left'] = left + 'px';
-        this.styleLine['width'] = H + 'px';
-        this.styleLine['height'] = W + 'px';
-        this.styleLine['background'] = 'linear-gradient(to right, ' +
+        const arrowBw = !this.needSwap[nth] && this.isVisible(arrows[0]) && arrows[0] || this.needSwap[nth] && this.isVisible(arrows[1]) && arrows[1];
+        this.styleArrowFw[nth] = {};
+        this.styleArrowBw[nth] = {};
+        this.styleLine[nth] = {};
+        this.styleArrowFw[nth]['borderRightColor'] = color;
+        this.styleArrowFw[nth]['top'] = W / 2 - 6 + 'px';
+        this.styleArrowBw[nth]['borderLeftColor'] = color;
+        this.styleArrowBw[nth]['top'] = W / 2 - 6 + 'px';
+        this.styleLine[nth]['display'] = 'none';
+        this.styleLine[nth]['-webkit-transform'] = 'rotate(' + ANG + 'deg)';
+        this.styleLine[nth]['-moz-transform'] = 'rotate(' + ANG + 'deg)';
+        this.styleLine[nth]['-ms-transform'] = 'rotate(' + ANG + 'deg)';
+        this.styleLine[nth]['-o-transform'] = 'rotate(' + ANG + 'deg)';
+        this.styleLine[nth]['-transform'] = 'rotate(' + ANG + 'deg)';
+        this.styleLine[nth]['top'] = top + 'px';
+        this.styleLine[nth]['left'] = left + 'px';
+        this.styleLine[nth]['width'] = H + 'px';
+        this.styleLine[nth]['height'] = W + 'px';
+        this.styleLine[nth]['background'] = 'linear-gradient(to right, ' +
             (arrowFw ? 'transparent' : color) + ' 11px, ' +
             color + ' 11px ' + (H - 11) + 'px, ' +
             (arrowBw ? 'transparent' : color) + ' ' + (H - 11) + 'px 100%)';
-        this.styleLine['display'] = 'initial';
+        this.styleLine[nth]['display'] = 'initial';
+    }
+    /**
+     * @private
+     * @return {?}
+     */
+    adjustLines() {
+        this.getFromToPairs()
+            .map((/**
+         * @param {?} pair
+         * @param {?} i
+         * @return {?}
+         */
+        (pair, i) => {
+            this.adjustLine(i, pair[0], pair[1]);
+        }));
+    }
+    /**
+     * @private
+     * @return {?}
+     */
+    getFromToPairs() {
+        /** @type {?} */
+        const froms = Array.from((/** @type {?} */ (document.querySelectorAll(this.from))));
+        /** @type {?} */
+        const tos = Array.from((/** @type {?} */ (document.querySelectorAll(this.to))));
+        // init values
+        this.needSwap = Array(froms.length * tos.length).fill(false);
+        this.styleLine = Array(froms.length * tos.length).fill([]);
+        this.styleArrowBw = Array(froms.length * tos.length).fill({});
+        this.styleArrowFw = Array(froms.length * tos.length).fill({});
+        this.arrowIndices = Array(froms.length * tos.length)
+            .fill(null).map((/**
+         * @param {?} _
+         * @param {?} i
+         * @return {?}
+         */
+        (_, i) => i));
+        return froms.reduce((/**
+         * @param {?} acc1
+         * @param {?} cur1
+         * @return {?}
+         */
+        (acc1, cur1) => {
+            return tos.reduce((/**
+             * @param {?} acc2
+             * @param {?} cur2
+             * @return {?}
+             */
+            (acc2, cur2) => {
+                acc2.push([cur1, cur2]);
+                return acc2;
+            }), acc1);
+        }), []);
     }
     /**
      * @private
@@ -247,26 +304,26 @@ class NgxDomarrowComponent {
         const currentPos = JSON.stringify(from.getBoundingClientRect()) + JSON.stringify(to.getBoundingClientRect());
         if (currentPos !== this.elementPositionBackup) {
             this.elementPositionBackup = currentPos;
-            this.adjustLine();
+            this.adjustLines();
         }
     }
     /**
      * @return {?}
      */
     ngOnInit() {
-        this.adjustLine();
+        this.adjustLines();
         this.refreshPos = window.setInterval((/**
          * @return {?}
          */
         () => {
             this.trackPositionChange();
-        }), 100);
+        }), this.refreshInterval);
     }
     /**
      * @return {?}
      */
     ngOnChanges() {
-        this.adjustLine();
+        this.adjustLines();
     }
     /**
      * @return {?}
@@ -279,7 +336,7 @@ class NgxDomarrowComponent {
 NgxDomarrowComponent.decorators = [
     { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"], args: [{
                 selector: 'ngx-domarrow',
-                template: "<div class=\"line\" [ngStyle]=\"styleLine\">\n\n  <div *ngIf=\"head == true\" class=\"arrow head {{ needSwap ? 'arrow-bw' : 'arrow-fw' }}\"\n    [ngStyle]=\"needSwap ? styleArrowBw : styleArrowFw\"></div>\n  <div *ngIf=\"tail == true\" class=\"arrow tail {{ needSwap ? 'arrow-fw' : 'arrow-bw' }}\"\n    [ngStyle]=\"needSwap ? styleArrowFw : styleArrowBw\"></div>\n  <div *ngIf=\"!!text && text.length > 0\" class=\"text\">{{ text }}</div>\n\n</div>\n",
+                template: "<ng-container *ngFor=\"let index of arrowIndices\">\n\n  <div class=\"line line-{{ index }}\" [ngStyle]=\"styleLine[index]\">\n\n    <div *ngIf=\"head == true\" class=\"arrow head {{ needSwap[index] ? 'arrow-bw' : 'arrow-fw' }}\"\n      [ngStyle]=\"needSwap[index] ? styleArrowBw[index] : styleArrowFw[index]\"></div>\n    <div *ngIf=\"tail == true\" class=\"arrow tail {{ needSwap[index] ? 'arrow-fw' : 'arrow-bw' }}\"\n      [ngStyle]=\"needSwap[index] ? styleArrowFw[index] : styleArrowBw[index]\"></div>\n    <div *ngIf=\"!!text && text.length > 0\" class=\"text\">{{ text }}</div>\n\n  </div>\n\n</ng-container>\n",
                 styles: [".line .arrow{top:-5px;height:0;width:0;position:absolute;border-bottom:6px solid transparent;border-top:6px solid transparent;background-clip:border-box}.line .arrow-fw{border-right:12px solid #000}.line .arrow-bw{left:100%;border-left:12px solid #000;-webkit-transform:translateX(-12px);transform:translateX(-12px)}.line .text{position:absolute;top:100%;left:50%;-webkit-transform:translate(-50%,-100%);transform:translate(-50%,-100%)}.line{position:absolute;height:2px;background-color:#000}"]
             }] }
 ];
@@ -288,6 +345,7 @@ NgxDomarrowComponent.ctorParameters = () => [
     { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ElementRef"] }
 ];
 NgxDomarrowComponent.propDecorators = {
+    refreshInterval: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
     from: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
     to: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
     head: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
@@ -347,7 +405,7 @@ NgxDomarrowModule.decorators = [
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<div id=\"element-1\" class=\"element\"></div>\n<div id=\"element-2\" class=\"element\"></div>\n<div id=\"element-3\" class=\"element\"></div>\n\n<ngx-domarrow from=\"#element-1\" to=\"#element-2\" [tail]=\"true\" [onlyVisible]=\"true\" color=\"blue\" text=\"Hello world\">\n</ngx-domarrow>\n\n<ngx-domarrow from=\"#element-1\" to=\"#element-3\" [head]=\"true\" [tail]=\"true\" color=\"#0000FF\" [width]=\"5\">\n</ngx-domarrow>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<div id=\"element-1\" class=\"element\"></div>\n<div id=\"element-2\" class=\"element\"></div>\n<div id=\"element-3\" class=\"element\"></div>\n<div id=\"element-4\" class=\"element multiple\"></div>\n<div id=\"element-5\" class=\"element multiple\"></div>\n<div id=\"element-6\" class=\"element multiple\"></div>\n\n<ngx-domarrow from=\"#element-1\" to=\"#element-2\" [tail]=\"true\" [onlyVisible]=\"true\" color=\"blue\" text=\"Hello world\">\n</ngx-domarrow>\n\n<ngx-domarrow from=\"#element-1\" to=\"#element-3\" [head]=\"true\" [tail]=\"true\" color=\"#0000FF\" [width]=\"5\">\n</ngx-domarrow>\n\n<ngx-domarrow from=\"#element-3\" to=\".element.multiple\" [head]=\"false\" [tail]=\"true\" color=\"green\" [width]=\"2\">\n</ngx-domarrow>\n");
 
 /***/ }),
 
@@ -612,7 +670,7 @@ webpackEmptyAsyncContext.id = "./$$_lazy_route_resource lazy recursive";
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = (".element {\n  position: absolute;\n  width: 100px;\n  height: 100px;\n  border: 5px solid red;\n}\n\n#element-1 {\n  top: 50px;\n  left: 50px;\n}\n\n#element-2 {\n  top: 600px;\n  left: 250px;\n}\n\n#element-3 {\n  top: 300px;\n  left: 700px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9zYW1iZXIvcHJvamVjdC9naXRodWIuY29tL3NhbWJlci9uZ3gtZG9tYXJyb3cvbmd4LWRvbWFycm93L2RlbW8vc3JjL2FwcC9hcHAuY29tcG9uZW50LnNjc3MiLCJkZW1vL3NyYy9hcHAvYXBwLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0Usa0JBQUE7RUFDQSxZQUFBO0VBQ0EsYUFBQTtFQUVBLHFCQUFBO0FDQUY7O0FER0E7RUFDRSxTQUFBO0VBQ0EsVUFBQTtBQ0FGOztBREdBO0VBQ0UsVUFBQTtFQUNBLFdBQUE7QUNBRjs7QURHQTtFQUNFLFVBQUE7RUFDQSxXQUFBO0FDQUYiLCJmaWxlIjoiZGVtby9zcmMvYXBwL2FwcC5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIi5lbGVtZW50IHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICB3aWR0aDogMTAwcHg7XG4gIGhlaWdodDogMTAwcHg7XG5cbiAgYm9yZGVyOiA1cHggc29saWQgcmVkO1xufVxuXG4jZWxlbWVudC0xIHtcbiAgdG9wOiA1MHB4O1xuICBsZWZ0OiA1MHB4O1xufVxuXG4jZWxlbWVudC0yIHtcbiAgdG9wOiA2MDBweDtcbiAgbGVmdDogMjUwcHg7XG59XG5cbiNlbGVtZW50LTMge1xuICB0b3A6IDMwMHB4O1xuICBsZWZ0OiA3MDBweDtcbn1cbiIsIi5lbGVtZW50IHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICB3aWR0aDogMTAwcHg7XG4gIGhlaWdodDogMTAwcHg7XG4gIGJvcmRlcjogNXB4IHNvbGlkIHJlZDtcbn1cblxuI2VsZW1lbnQtMSB7XG4gIHRvcDogNTBweDtcbiAgbGVmdDogNTBweDtcbn1cblxuI2VsZW1lbnQtMiB7XG4gIHRvcDogNjAwcHg7XG4gIGxlZnQ6IDI1MHB4O1xufVxuXG4jZWxlbWVudC0zIHtcbiAgdG9wOiAzMDBweDtcbiAgbGVmdDogNzAwcHg7XG59Il19 */");
+/* harmony default export */ __webpack_exports__["default"] = (".element {\n  position: absolute;\n  width: 100px;\n  height: 100px;\n  border: 5px solid red;\n}\n\n#element-1 {\n  top: 50px;\n  left: 50px;\n}\n\n#element-2 {\n  top: 600px;\n  left: 250px;\n}\n\n#element-3 {\n  top: 300px;\n  left: 700px;\n}\n\n.element.multiple {\n  width: 50px;\n  height: 50px;\n  border: 3px solid orange;\n}\n\n#element-4 {\n  top: 50px;\n  left: 400px;\n}\n\n#element-5 {\n  top: 250px;\n  left: 300px;\n}\n\n#element-6 {\n  top: 600px;\n  left: 600px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9zYW1iZXIvcHJvamVjdC9naXRodWIuY29tL3NhbWJlci9uZ3gtZG9tYXJyb3cvbmd4LWRvbWFycm93L2RlbW8vc3JjL2FwcC9hcHAuY29tcG9uZW50LnNjc3MiLCJkZW1vL3NyYy9hcHAvYXBwLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0Usa0JBQUE7RUFDQSxZQUFBO0VBQ0EsYUFBQTtFQUVBLHFCQUFBO0FDQUY7O0FER0E7RUFDRSxTQUFBO0VBQ0EsVUFBQTtBQ0FGOztBREdBO0VBQ0UsVUFBQTtFQUNBLFdBQUE7QUNBRjs7QURHQTtFQUNFLFVBQUE7RUFDQSxXQUFBO0FDQUY7O0FER0E7RUFDRSxXQUFBO0VBQ0EsWUFBQTtFQUVBLHdCQUFBO0FDREY7O0FESUE7RUFDRSxTQUFBO0VBQ0EsV0FBQTtBQ0RGOztBRElBO0VBQ0UsVUFBQTtFQUNBLFdBQUE7QUNERjs7QURJQTtFQUNFLFVBQUE7RUFDQSxXQUFBO0FDREYiLCJmaWxlIjoiZGVtby9zcmMvYXBwL2FwcC5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIi5lbGVtZW50IHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICB3aWR0aDogMTAwcHg7XG4gIGhlaWdodDogMTAwcHg7XG5cbiAgYm9yZGVyOiA1cHggc29saWQgcmVkO1xufVxuXG4jZWxlbWVudC0xIHtcbiAgdG9wOiA1MHB4O1xuICBsZWZ0OiA1MHB4O1xufVxuXG4jZWxlbWVudC0yIHtcbiAgdG9wOiA2MDBweDtcbiAgbGVmdDogMjUwcHg7XG59XG5cbiNlbGVtZW50LTMge1xuICB0b3A6IDMwMHB4O1xuICBsZWZ0OiA3MDBweDtcbn1cblxuLmVsZW1lbnQubXVsdGlwbGUge1xuICB3aWR0aDogNTBweDtcbiAgaGVpZ2h0OiA1MHB4O1xuXG4gIGJvcmRlcjogM3B4IHNvbGlkIG9yYW5nZTtcbn1cblxuI2VsZW1lbnQtNCB7XG4gIHRvcDogNTBweDtcbiAgbGVmdDogNDAwcHg7XG59XG5cbiNlbGVtZW50LTUge1xuICB0b3A6IDI1MHB4O1xuICBsZWZ0OiAzMDBweDtcbn1cblxuI2VsZW1lbnQtNiB7XG4gIHRvcDogNjAwcHg7XG4gIGxlZnQ6IDYwMHB4O1xufVxuIiwiLmVsZW1lbnQge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIHdpZHRoOiAxMDBweDtcbiAgaGVpZ2h0OiAxMDBweDtcbiAgYm9yZGVyOiA1cHggc29saWQgcmVkO1xufVxuXG4jZWxlbWVudC0xIHtcbiAgdG9wOiA1MHB4O1xuICBsZWZ0OiA1MHB4O1xufVxuXG4jZWxlbWVudC0yIHtcbiAgdG9wOiA2MDBweDtcbiAgbGVmdDogMjUwcHg7XG59XG5cbiNlbGVtZW50LTMge1xuICB0b3A6IDMwMHB4O1xuICBsZWZ0OiA3MDBweDtcbn1cblxuLmVsZW1lbnQubXVsdGlwbGUge1xuICB3aWR0aDogNTBweDtcbiAgaGVpZ2h0OiA1MHB4O1xuICBib3JkZXI6IDNweCBzb2xpZCBvcmFuZ2U7XG59XG5cbiNlbGVtZW50LTQge1xuICB0b3A6IDUwcHg7XG4gIGxlZnQ6IDQwMHB4O1xufVxuXG4jZWxlbWVudC01IHtcbiAgdG9wOiAyNTBweDtcbiAgbGVmdDogMzAwcHg7XG59XG5cbiNlbGVtZW50LTYge1xuICB0b3A6IDYwMHB4O1xuICBsZWZ0OiA2MDBweDtcbn0iXX0= */");
 
 /***/ }),
 

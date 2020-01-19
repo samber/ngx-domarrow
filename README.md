@@ -34,7 +34,13 @@ import { NgxDomarrowModule } from 'ngx-domarrow';
 
 <ngx-domarrow from="#image-1" to="#image-2" [head]="true" [tail]="true"
         color="#0000FF"></ngx-domarrow>
+
+
+<ngx-domarrow from="#single" to=".multiple" [tail]="true"
+        color="#0000FF"></ngx-domarrow>
 ```
+
+Full list of properties => [./lib/src/lib/ngx-domarrow.component.ts](./lib/src/lib/ngx-domarrow.component.ts)
 
 ## Contribute
 
