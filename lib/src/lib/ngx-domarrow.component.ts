@@ -1,13 +1,11 @@
-import { Component, Input, OnInit, OnChanges, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, ElementRef, DoCheck } from '@angular/core';
 
 @Component({
   selector: 'ngx-domarrow',
   templateUrl: './ngx-domarrow.component.html',
   styleUrls: ['./ngx-domarrow.component.scss'],
 })
-export class NgxDomarrowComponent implements OnInit, OnChanges {
-
-  @Input() public refreshInterval: number = 50;
+export class NgxDomarrowComponent implements OnInit, DoCheck {
 
   @Input() public from: string = null;
   @Input() public to: string = null;
@@ -179,7 +177,7 @@ export class NgxDomarrowComponent implements OnInit, OnChanges {
   }
 
   private adjustLines() {
-    const pairs = this.getFromToPairs()
+    const pairs = this.getFromToPairs();
 
     // init values
     this.needSwap = Array(pairs.length).fill(false);
@@ -222,15 +220,10 @@ export class NgxDomarrowComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.adjustLines();
-
-    this.refreshPos = window.setInterval(() => {
-      this.trackPositionChange();
-    }, this.refreshInterval);
   }
 
-
-  ngOnChanges() {
-    this.adjustLines();
+  ngDoCheck() {
+    this.trackPositionChange();
   }
 
   ngOnDestroy() {
