@@ -77,7 +77,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         this.styleArrowBw = [];
         this.needSwap = [];
         this.elementPositionBackup = '';
-        this.refreshPos = null;
       }
       /**
        * @private
@@ -435,9 +434,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
       }, {
         key: "ngOnDestroy",
-        value: function ngOnDestroy() {
-          if (!!this.refreshPos) window.clearInterval(this.refreshPos);
-        }
+        value: function ngOnDestroy() {}
       }]);
 
       return NgxDomarrowComponent;

@@ -31,7 +31,6 @@ export class NgxDomarrowComponent implements OnInit, DoCheck {
   public needSwap: boolean[] = [];
 
   private elementPositionBackup: string = '';
-  private refreshPos: number = null;
 
   constructor(
     private elem: ElementRef,
@@ -227,8 +226,6 @@ export class NgxDomarrowComponent implements OnInit, DoCheck {
   }
 
   ngOnDestroy() {
-    if (!!this.refreshPos)
-      window.clearInterval(this.refreshPos);
   }
 
 }

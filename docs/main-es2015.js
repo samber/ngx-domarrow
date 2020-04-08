@@ -45,7 +45,6 @@ class NgxDomarrowComponent {
         this.styleArrowBw = [];
         this.needSwap = [];
         this.elementPositionBackup = '';
-        this.refreshPos = null;
     }
     /**
      * @private
@@ -330,8 +329,6 @@ class NgxDomarrowComponent {
      * @return {?}
      */
     ngOnDestroy() {
-        if (!!this.refreshPos)
-            window.clearInterval(this.refreshPos);
     }
 }
 NgxDomarrowComponent.decorators = [
