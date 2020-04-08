@@ -59,7 +59,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         _classCallCheck(this, NgxDomarrowComponent);
 
         this.elem = elem;
-        this.refreshInterval = 50;
         this.from = null;
         this.to = null;
         this.head = false;
@@ -317,8 +316,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           var _this = this;
 
           /** @type {?} */
-          var pairs = this.getFromToPairs() // init values
-          ; // init values
+          var pairs = this.getFromToPairs(); // init values
 
           this.needSwap = Array(pairs.length).fill(false);
           this.styleLine = Array(pairs.length).fill([]);
@@ -420,25 +418,16 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       }, {
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this2 = this;
-
           this.adjustLines();
-          this.refreshPos = window.setInterval(
-          /**
-          * @return {?}
-          */
-          function () {
-            _this2.trackPositionChange();
-          }, this.refreshInterval);
         }
         /**
          * @return {?}
          */
 
       }, {
-        key: "ngOnChanges",
-        value: function ngOnChanges() {
-          this.adjustLines();
+        key: "ngDoCheck",
+        value: function ngDoCheck() {
+          this.trackPositionChange();
         }
         /**
          * @return {?}
@@ -471,9 +460,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     };
 
     NgxDomarrowComponent.propDecorators = {
-      refreshInterval: [{
-        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
-      }],
       from: [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
       }],

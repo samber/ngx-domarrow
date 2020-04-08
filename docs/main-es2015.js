@@ -27,7 +27,6 @@ class NgxDomarrowComponent {
      */
     constructor(elem) {
         this.elem = elem;
-        this.refreshInterval = 50;
         this.from = null;
         this.to = null;
         this.head = false;
@@ -242,9 +241,7 @@ class NgxDomarrowComponent {
      */
     adjustLines() {
         /** @type {?} */
-        const pairs = this.getFromToPairs()
-        // init values
-        ;
+        const pairs = this.getFromToPairs();
         // init values
         this.needSwap = Array(pairs.length).fill(false);
         this.styleLine = Array(pairs.length).fill([]);
@@ -322,18 +319,12 @@ class NgxDomarrowComponent {
      */
     ngOnInit() {
         this.adjustLines();
-        this.refreshPos = window.setInterval((/**
-         * @return {?}
-         */
-        () => {
-            this.trackPositionChange();
-        }), this.refreshInterval);
     }
     /**
      * @return {?}
      */
-    ngOnChanges() {
-        this.adjustLines();
+    ngDoCheck() {
+        this.trackPositionChange();
     }
     /**
      * @return {?}
@@ -355,7 +346,6 @@ NgxDomarrowComponent.ctorParameters = () => [
     { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ElementRef"] }
 ];
 NgxDomarrowComponent.propDecorators = {
-    refreshInterval: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
     from: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
     to: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
     head: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
