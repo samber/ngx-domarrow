@@ -417,7 +417,20 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       }, {
         key: "ngOnInit",
         value: function ngOnInit() {
+          var _this2 = this;
+
           this.adjustLines();
+          window.addEventListener("scroll",
+          /**
+          * @return {?}
+          */
+          function () {
+            if (new Date().getTime() % 5 == 0) {
+              // don't 🔥 the CPU
+              // @TODO: better hack with setTimeout overriden at each event ?
+              _this2.trackPositionChange();
+            }
+          });
         }
         /**
          * @return {?}

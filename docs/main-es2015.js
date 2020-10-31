@@ -318,6 +318,16 @@ class NgxDomarrowComponent {
      */
     ngOnInit() {
         this.adjustLines();
+        window.addEventListener("scroll", (/**
+         * @return {?}
+         */
+        () => {
+            if (new Date().getTime() % 5 == 0) {
+                // don't 🔥 the CPU
+                // @TODO: better hack with setTimeout overriden at each event ?
+                this.trackPositionChange();
+            }
+        }));
     }
     /**
      * @return {?}

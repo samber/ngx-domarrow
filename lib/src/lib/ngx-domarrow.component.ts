@@ -219,6 +219,13 @@ export class NgxDomarrowComponent implements OnInit, DoCheck {
 
   ngOnInit() {
     this.adjustLines();
+    window.addEventListener("scroll", () => {
+      if (new Date().getTime() % 5 == 0) {
+        // don't 🔥 the CPU
+        // @TODO: better hack with setTimeout overriden at each event ?
+        this.trackPositionChange();
+      }
+    });
   }
 
   ngDoCheck() {
